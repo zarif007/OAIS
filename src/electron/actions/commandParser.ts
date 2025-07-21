@@ -2,7 +2,7 @@ import { generateObject } from "ai";
 import { groq } from "@ai-sdk/groq";
 import commandCompiler from "../compilers/commandCompiler.js";
 import { CommandStructure } from "../types/commandStructure.js";
-import commandParserSystemPrompt from "../systemPrompts/coomandParser.js";
+import commandParserSystemPrompt from "../systemPrompts/commandParser.js";
 import { CommandStructureSchema } from "../zodSchema/commandStructure.js";
 import { Command } from "../types/commandGenerator.js";
 

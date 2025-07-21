@@ -45,7 +45,6 @@ app.on("ready", () => {
     dotenv.config();
     try {
       const commands = await generateCommands(promptText);
-      console.log(commands);
       const parsedCommands = await parseCommands(commands);
       const compiledCommands = commandCompiler(parsedCommands);
       await commandsExecutor(compiledCommands);

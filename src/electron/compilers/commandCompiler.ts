@@ -2,19 +2,44 @@ import { ShellCommand } from "../types/commandStructure.js";
 
 function formatArgObject(arg: Record<string, any>): string[] {
   const parts: string[] = [];
+
   if (arg.positional) {
-    parts.push(...arg.positional);
+    parts.push(
+      ...arg.positional.map((v: string) => (v.includes(" ") ? `"${v}"` : v))
+    );
   }
+
   if (arg.keyValue) {
     for (const [k, v] of Object.entries(arg.keyValue)) {
-      parts.push(`${k}=${v}`);
+      const vStr = String(v);
+      parts.push(`${k}=${vStr.includes(" ") ? `"${vStr}"` : vStr}`);
     }
   }
+
   if (arg.flags) {
     parts.push(
       ...arg.flags.map((f: string) => (f.startsWith("-") ? f : `-${f}`))
     );
   }
+
+  if (arg.src) {
+    parts.push(arg.src.includes(" ") ? `"${arg.src}"` : arg.src);
+  }
+
+  if (arg.dest) {
+    parts.push(arg.dest.includes(" ") ? `"${arg.dest}"` : arg.dest);
+  }
+
+  if (arg.new_name) {
+    parts.push(arg.new_name.includes(" ") ? `"${arg.new_name}"` : arg.new_name);
+  }
+
+  if (arg.keywords) {
+    parts.push(
+      ...arg.keywords.map((k: string) => (k.includes(" ") ? `"${k}"` : k))
+    );
+  }
+
   return parts;
 }
 
@@ -50,8 +75,7 @@ function compileFileAgentCommand(cmd: ShellCommand): string {
 
   if (cmd.args) {
     for (const arg of cmd.args) {
-      const formatted = formatArgObject(arg);
-      result.push(...formatted);
+      result.push(...formatArgObject(arg));
     }
   }
 
@@ -111,8 +135,7 @@ function compileAppAgentCommand(cmd: ShellCommand): string {
 
   if (cmd.args) {
     for (const arg of cmd.args) {
-      const formatted = formatArgObject(arg);
-      result.push(...formatted);
+      result.push(...formatArgObject(arg));
     }
   }
 
@@ -134,9 +157,7 @@ function compileAppAgentCommand(cmd: ShellCommand): string {
   if (cmd.background) result.push("&");
   if (cmd.subshell) result.push(")");
 
-  let compiled = result.join(" ").trim();
-  // if (cmd.chainWith) compiled += ` ${cmd.chainWith}`;
-  return compiled;
+  return result.join(" ").trim();
 }
 
 function commandCompiler(commands: ShellCommand[]): string[] {
