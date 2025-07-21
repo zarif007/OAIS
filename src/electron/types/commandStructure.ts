@@ -1,7 +1,19 @@
+export type ArgObject = {
+  src?: string;
+  dest?: string;
+  new_name?: string;
+  keywords?: string[];
+  positional?: string[];
+  keyValue?: Record<string, string>;
+  flags?: string[];
+
+  [key: string]: any;
+};
+
 export type ShellCommand = {
   command: string;
   subCommand?: string;
-  args?: string[];
+  args?: ArgObject[];
   options?: string[];
   longOptions?: string[];
   raw?: string;
@@ -25,12 +37,10 @@ export type ShellCommand = {
   nohup?: boolean;
   comment?: string;
   label?: string;
-  agent_type: "file_agent" | "app_agent";
+  agent_type: "file" | "app";
   rawCommand?: string;
 };
 
-type CommandStructure = {
+export type CommandStructure = {
   commands: ShellCommand[];
 };
-
-export default CommandStructure;

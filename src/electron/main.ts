@@ -3,6 +3,8 @@ import * as path from "path";
 import { app, BrowserWindow, ipcMain, screen, IpcMainEvent } from "electron";
 import generateCommands from "./actions/commandGenerator.js";
 import commandsExecutor from "./actions/commandsExecutor.js";
+import parseCommands from "./actions/commandParser.js";
+import commandCompiler from "./compilers/commandCompiler.js";
 
 app.on("ready", () => {
   const { width: screenWidth, height: screenHeight } =
@@ -44,7 +46,9 @@ app.on("ready", () => {
     try {
       const commands = await generateCommands(promptText);
       console.log(commands);
-      await commandsExecutor(commands);
+      const parsedCommands = await parseCommands(commands);
+      const compiledCommands = commandCompiler(parsedCommands);
+      await commandsExecutor(compiledCommands);
       mainWindow.webContents.send("commands-executed", commands);
     } catch (err) {
       console.error("Error generating commands:", err);
