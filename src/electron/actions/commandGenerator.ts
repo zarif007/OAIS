@@ -1,8 +1,6 @@
 import { generateObject } from "ai";
 import { groq } from "@ai-sdk/groq";
 import commandGenerator from "../systemPrompts/commandGenerator.js";
-import commandCompiler from "../compilers/commandCompiler.js";
-import { CommandStructure } from "../types/commandStructure.js";
 import CommandGeneratorOutputSchema from "../zodSchema/commandGenerator.js";
 import CommandGeneratorOutput from "../types/commandGenerator.js";
 

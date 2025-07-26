@@ -26,9 +26,24 @@ export const CommandSchema = z.object({
       1,
       "A short, plain-language explanation of what this command does. Example: 'Deletes the /folder directory and all its contents'."
     ),
+
+  placeholder: z
+    .string()
+    .optional()
+    .describe("Command with placeholders. Example: 'mv <location> <location>'"),
+
+  context_link: z
+    .object({
+      dependsOnCommandNo: z
+        .number()
+        .describe("The index (1-based) of the command this one depends on."),
+      from: z.enum(["src", "dest"]),
+      to: z.enum(["src", "dest"]),
+    })
+    .optional(),
 });
 
-const CommandGeneratorOutputSchema = z.object({
+export const CommandGeneratorOutputSchema = z.object({
   commands: z.array(CommandSchema),
 });
 

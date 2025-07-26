@@ -1,15 +1,48 @@
-import { useState, useTransition } from "react";
+import { useState, useTransition, useEffect } from "react";
 import { Send } from "lucide-react";
 // @ts-ignore
 const { ipcRenderer } = (window as any).require?.("electron") || {
   ipcRenderer: null,
 };
 import "./App.css";
+import DangerBar from "./componenets/Dangerbar";
+import { Command } from "../electron/types/commandGenerator";
 
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [isPending, startTransition] = useTransition();
   const [executing, setExecuting] = useState(false);
+  const [dangerousCmds, setDangerousCmds] = useState<null | Command[]>(null);
+
+  useEffect(() => {
+    if (!ipcRenderer) return;
+
+    const dangerousCommandHandler = (_: any, data: any[]) => {
+      console.log("Dangerous command received:", data);
+      setDangerousCmds(data);
+      setExecuting(false);
+    };
+
+    const commandsExecutedHandler = (_: any, data: any[]) => {
+      console.log("Commands executed:", data);
+      setExecuting(false);
+    };
+
+    const commandErrorHandler = (_: any, error: any) => {
+      console.error("Command error:", error);
+      setExecuting(false);
+    };
+
+    ipcRenderer.on("dangerous-command", dangerousCommandHandler);
+    ipcRenderer.on("commands-executed", commandsExecutedHandler);
+    ipcRenderer.on("command-error", commandErrorHandler);
+
+    return () => {
+      ipcRenderer.removeListener("dangerous-command", dangerousCommandHandler);
+      ipcRenderer.removeListener("commands-executed", commandsExecutedHandler);
+      ipcRenderer.removeListener("command-error", commandErrorHandler);
+    };
+  }, []);
 
   const handleSend = () => {
     if (prompt.trim() && ipcRenderer) {
@@ -19,6 +52,22 @@ export default function App() {
       });
     }
     setPrompt("");
+  };
+
+  const handleDangerCancel = () => {
+    setDangerousCmds(null);
+    setExecuting(false);
+    if (ipcRenderer) {
+      ipcRenderer.send("dangerous-command-cancel");
+    }
+  };
+
+  const handleDangerProceed = () => {
+    if (ipcRenderer && dangerousCmds) {
+      ipcRenderer.send("dangerous-command-proceed", dangerousCmds);
+      setDangerousCmds(null);
+      setExecuting(true);
+    }
   };
 
   return (
@@ -31,12 +80,12 @@ export default function App() {
       />
 
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-[90vw] max-w-2xl flex flex-col items-center">
-        {executing && (
-          <div className="mb-3 w-full flex items-center justify-center">
-            <div className="px-4 py-2 rounded-xl bg-gradient-to-r from-zinc-200 via-zinc-100 to-zinc-300 text-zinc-700 text-base font-semibold shadow">
-              Executing...
-            </div>
-          </div>
+        {dangerousCmds && (
+          <DangerBar
+            dangerousCmds={dangerousCmds}
+            handleDangerProceed={handleDangerProceed}
+            handleDangerCancel={handleDangerCancel}
+          />
         )}
         <div className="relative w-full">
           <div className="relative flex items-center w-full bg-white/70 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl shadow-black/10 p-1.5">

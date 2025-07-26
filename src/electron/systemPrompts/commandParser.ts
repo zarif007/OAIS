@@ -88,7 +88,11 @@ For file operations, ALWAYS prefer specific fields over generic ones:
 - **FIRST** try: src, dest, new_name
 - **THEN** try: keyValue (if it's a flag argument with '=')
 - **NEVER** use positional for file paths
-
+### **5. File Handling**
+- **src**: Use for source files/directories (e.g., cp source.txt dest.txt).
+- **dest**: Use for destination files/directories (e.g., mv old.txt new.txt).
+- **new_name**: Use for renaming files (e.g., mv old.txt new_name.txt).
+- If there is any file separated by a space, it should be quoted in the output.
 ---
 
 ## 🎯 **File Operation Patterns**
