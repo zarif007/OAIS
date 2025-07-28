@@ -107,7 +107,7 @@ const executeTasks = async (commands: Command[], mainWindow: BrowserWindow) => {
     console.log("executeTasks called with commands:", commands);
     // const parsedCommands = await parseCommands(commands);
     // const compiledCommands = commandCompiler(parsedCommands);
-    // await commandsExecutor(compiledCommands);
+    await commandsExecutor(commands.map((cmd) => cmd.command));
     // mainWindow.webContents.send("commands-executed", lastCommands);
   } catch (err) {
     console.error("Error executing tasks:", err);

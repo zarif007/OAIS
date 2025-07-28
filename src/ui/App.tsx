@@ -5,13 +5,13 @@ const { ipcRenderer } = (window as any).require?.("electron") || {
   ipcRenderer: null,
 };
 import "./App.css";
-import DangerBar from "./componenets/Dangerbar";
+import DangerBar from "./componenets/DangerBar";
 import { Command } from "../electron/types/commandGenerator";
 
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [executing, setExecuting] = useState(false);
+  const [_, setExecuting] = useState(false);
   const [dangerousCmds, setDangerousCmds] = useState<null | Command[]>(null);
 
   useEffect(() => {
@@ -99,13 +99,13 @@ export default function App() {
               onChange={(e) => setPrompt(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               autoFocus
-              disabled={isPending}
+              disabled={isPending || !!dangerousCmds}
             />
 
             <button
               className="ml-2 p-3 h-12 rounded-xl bg-gradient-to-br from-zinc-700 via-zinc-900 to-black hover:from-zinc-600 hover:to-zinc-800 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-zinc-800/40 hover:shadow-black/50 hover:scale-[1.05] active:scale-[0.97] disabled:hover:scale-100"
               onClick={handleSend}
-              disabled={!prompt.trim() || isPending}
+              disabled={!prompt.trim() || isPending || !!dangerousCmds}
               aria-label="Send"
             >
               <Send className="w-5 h-5 text-white drop-shadow" />

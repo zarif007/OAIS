@@ -8,12 +8,11 @@ export const CommandSchema = z.object({
       "The actual shell command to be executed. Example: 'rm -rf /folder'. Must not be empty."
     ),
 
-  agent_type: z.enum(["file", "app"], {
-    errorMap: () => ({
-      message:
-        "Agent type must be either 'file' (e.g., for file system operations) or 'app' (e.g., for opening applications).",
-    }),
-  }),
+  agent_type: z
+    .string()
+    .describe(
+      "The type of agent that will execute this command. Example: 'file', 'app', 'media', etc."
+    ),
 
   isItDangerous: z.boolean({
     required_error:
@@ -41,6 +40,11 @@ export const CommandSchema = z.object({
       to: z.enum(["src", "dest"]),
     })
     .optional(),
+
+  expected_output: z
+    .string()
+    .optional()
+    .describe("What kind of output this command produces"),
 });
 
 export const CommandGeneratorOutputSchema = z.object({

@@ -13,7 +13,6 @@ const generateCommands = async (prompt: string) => {
     system: commandGenerator,
     output: "object",
   });
-
   return object.commands;
 };
 

@@ -1,6 +1,6 @@
 export interface Command {
   command: string;
-  agent_type: "file" | "app";
+  agent_type: string;
   isItDangerous: boolean;
   description: string;
   placeholder?: string;
@@ -9,6 +9,7 @@ export interface Command {
     from: "src" | "dest";
     to: "src" | "dest";
   };
+  expected_output?: string;
 }
 
 export interface CommandGeneratorOutput {
