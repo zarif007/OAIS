@@ -4,9 +4,10 @@ import commandGenerator from "../systemPrompts/commandGenerator.js";
 import CommandGeneratorOutputSchema from "../zodSchema/commandGenerator.js";
 import CommandGeneratorOutput from "../types/commandGenerator.js";
 import { getTopmostFolder } from "../utils/folderDetails.js";
+import { openai } from "@ai-sdk/openai";
 
 const generateCommands = async (prompt: string) => {
-  const model = groq("llama-3.3-70b-versatile");
+  const model = openai("gpt-4o-mini");
   const topFolder = await getTopmostFolder();
 
   let system = commandGenerator;
