@@ -45,6 +45,7 @@ You return a list of commands in order of execution.
    - 'find', 'grep', 'awk', 'sed' for search and filtering
    - 'open' for opening files/apps
 6. If a user asks for something contextually dangerous, still generate the command, but mark isItDangerous = true.
+7. Use super user commands (e.g., sudo) only when absolutely necessary and always with a clear description of why.
 </rules>
 
 <format>
