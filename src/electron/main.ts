@@ -1,11 +1,9 @@
 import * as dotenv from "dotenv";
 import * as path from "path";
 import { app, BrowserWindow, ipcMain, screen, IpcMainEvent } from "electron";
-import generateCommands from "./actions/commandGenerator.js";
-import commandsExecutor from "./actions/commandsExecutor.js";
-import parseCommands from "./actions/commandParser.js";
-import commandCompiler from "./compilers/commandCompiler.js";
 import { Command } from "./types/commandGenerator.js";
+import taskRouterAgent from "./agents/taskRouter.js";
+import agentHandler from "./actions/agentHandler.js";
 
 let lastCommands: Command[] = [];
 
@@ -47,26 +45,26 @@ app.on("ready", () => {
   ipcMain.on("prompt", async (event: IpcMainEvent, promptText: string) => {
     dotenv.config();
     try {
-      const commands = await generateCommands(promptText);
-      lastCommands = commands;
-      const isDangerous = commands.filter(
-        (command) => command.isItDangerous === true
-      );
-
-      if (isDangerous.length > 0) {
-        const newHeight = 160;
-        const currentBounds = mainWindow.getBounds();
-        mainWindow.setBounds({
-          ...currentBounds,
-          height: newHeight,
-          y: screenHeight - newHeight - 10,
-        });
-
-        mainWindow.webContents.send("dangerous-command", isDangerous);
-        return;
-      }
-
-      executeTasks(commands, mainWindow);
+      const selectedAgent = await taskRouterAgent(promptText);
+      const commands = await agentHandler(selectedAgent, promptText);
+      console.log(selectedAgent, commands);
+      // const commands = await generateCommands(promptText);
+      // lastCommands = commands;
+      // const isDangerous = commands.filter(
+      //   (command) => command.isItDangerous === true
+      // );
+      // if (isDangerous.length > 0) {
+      //   const newHeight = 160;
+      //   const currentBounds = mainWindow.getBounds();
+      //   mainWindow.setBounds({
+      //     ...currentBounds,
+      //     height: newHeight,
+      //     y: screenHeight - newHeight - 10,
+      //   });
+      //   mainWindow.webContents.send("dangerous-command", isDangerous);
+      //   return;
+      // }
+      // executeTasks(commands, mainWindow);
     } catch (err) {
       console.error("Error generating commands:", err);
       mainWindow.webContents.send("command-error", err);
@@ -107,7 +105,7 @@ const executeTasks = async (commands: Command[], mainWindow: BrowserWindow) => {
     console.log("executeTasks called with commands:", commands);
     // const parsedCommands = await parseCommands(commands);
     // const compiledCommands = commandCompiler(parsedCommands);
-    await commandsExecutor(commands.map((cmd) => cmd.command));
+    // await commandsExecutor(commands.map((cmd) => cmd.command));
     // mainWindow.webContents.send("commands-executed", lastCommands);
   } catch (err) {
     console.error("Error executing tasks:", err);

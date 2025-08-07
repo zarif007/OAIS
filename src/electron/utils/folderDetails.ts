@@ -5,7 +5,6 @@ const execPromise = promisify(exec);
 
 export async function getTopmostFolder() {
   try {
-    // Simplified AppleScript with proper structure for osascript
     const theCmd = `
     osascript -e 'tell application "Finder"
         if (count of Finder windows) > 0 then

@@ -8,11 +8,10 @@ export const CommandSchema = z.object({
       "The actual shell command to be executed. Example: 'rm -rf /folder'. Must not be empty."
     ),
 
-  agent_type: z
-    .string()
-    .describe(
-      "The type of agent that will execute this command. Example: 'file', 'app', 'media', etc."
-    ),
+  isExc: z.boolean({
+    required_error:
+      "Is it executable? Specify whether this command can be run directly in a shell.",
+  }),
 
   isItDangerous: z.boolean({
     required_error:
@@ -30,25 +29,10 @@ export const CommandSchema = z.object({
     .string()
     .optional()
     .describe("Command with placeholders. Example: 'mv <location> <location>'"),
-
-  context_link: z
-    .object({
-      dependsOnCommandNo: z
-        .number()
-        .describe("The index (1-based) of the command this one depends on."),
-      from: z.enum(["src", "dest"]),
-      to: z.enum(["src", "dest"]),
-    })
-    .optional(),
-
-  expected_output: z
-    .string()
-    .optional()
-    .describe("What kind of output this command produces"),
 });
 
-export const CommandGeneratorOutputSchema = z.object({
+export const LocalAgentOutputSchema = z.object({
   commands: z.array(CommandSchema),
 });
 
-export default CommandGeneratorOutputSchema;
+export default LocalAgentOutputSchema;

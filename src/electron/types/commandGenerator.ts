@@ -1,19 +1,13 @@
 export interface Command {
   command: string;
-  agent_type: string;
+  isExc: boolean;
   isItDangerous: boolean;
   description: string;
   placeholder?: string;
-  context_link?: {
-    dependsOnCommandNo: number;
-    from: "src" | "dest";
-    to: "src" | "dest";
-  };
-  expected_output?: string;
 }
 
-export interface CommandGeneratorOutput {
+export interface ILocalAgent {
   commands: Command[];
 }
 
-export default CommandGeneratorOutput;
+export default ILocalAgent;
