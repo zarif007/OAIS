@@ -16,9 +16,6 @@ const agentHandler = async (
     case "AppAgent":
       results.push(...(await appAgent(prompt)));
       break;
-    case "NetworkAgent":
-      results.push(...(await localAgent(prompt)));
-      break;
     default:
       throw new Error(`Unknown agent: ${selectedAgent}`);
   }
@@ -29,11 +26,15 @@ const agentHandler = async (
         return result;
       } else {
         const selectedAgent = await taskRouterAgent(result.command);
+        if (result.agent === selectedAgent) {
+          // Multipurpose agent to handle infinite recursion
+          return result;
+        }
         return await agentHandler(selectedAgent, result.command);
       }
     })
   );
-  // Flatten the array in case of nested arrays
+
   return nestedResults.flat();
 };
 

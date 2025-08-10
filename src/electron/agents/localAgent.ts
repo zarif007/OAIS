@@ -4,6 +4,7 @@ import LocalAgentOutputSchema from "../zodSchema/commandGenerator.js";
 import ILocalAgent from "../types/commandGenerator.js";
 import { getTopmostFolder } from "../utils/folderDetails.js";
 import { openai } from "@ai-sdk/openai";
+import resolvedLocation from "../utils/resolvedLocation.js";
 
 const localAgent = async (prompt: string) => {
   const model = openai("gpt-4o-mini");
@@ -18,6 +19,12 @@ const localAgent = async (prompt: string) => {
     system,
     output: "object",
   });
+
+  for (const command of object.commands) {
+    command.agent = "LocalAgent";
+    command.command = await resolvedLocation(command);
+  }
+
   return object.commands;
 };
 

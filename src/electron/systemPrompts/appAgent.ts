@@ -26,9 +26,10 @@ Return an object: { "commands": Command[] }
     - Controlling system utilities (like clipboard, volume, display)
     - Running development servers, emulators, or dev tools (like Xcode, VS Code)
     - Managing background processes for applications
+    - Only act on apps not folder or file.
 
 - If the prompt involves:
-  - File or folder operations (e.g., moving, copying, renaming)
+  - File or folder operations (e.g., moving, copying, renaming, opening)
   - Network or downloading tasks (e.g., downloading ZIPs or using curl)
 Then the task is not yours:
   - Return a natural-language instruction

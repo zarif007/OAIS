@@ -4,6 +4,7 @@ export interface Command {
   isItDangerous: boolean;
   description: string;
   placeholder?: string;
+  agent?: string;
 }
 
 export interface ILocalAgent {
