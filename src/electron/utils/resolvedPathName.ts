@@ -1,6 +1,6 @@
 import { Command } from "../types/commandGenerator.js";
 
-async function resolvedLocation(commandObj: Command) {
+async function resolvedPathName(commandObj: Command) {
   if (!commandObj.placeholder) return commandObj.command;
   const placeholderParts = commandObj.placeholder.split(" ");
   const locIndex = placeholderParts.findIndex((p) => p.includes("<location>"));
@@ -74,9 +74,6 @@ async function resolvedLocation(commandObj: Command) {
 
     if (match) {
       const score = similarityPercent(part, match);
-      console.log(
-        `Similarity score for '${part}' vs '${match}': ${score.toFixed(2)}%`
-      );
       if (score >= 80) {
         updatedParts.push(match);
       } else {
@@ -97,4 +94,4 @@ async function resolvedLocation(commandObj: Command) {
   return cmdParts.join(" ");
 }
 
-export default resolvedLocation;
+export default resolvedPathName;

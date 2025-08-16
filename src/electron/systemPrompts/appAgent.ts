@@ -18,6 +18,9 @@ Return an object: { "commands": Command[] }
 </output-format>
 
 <rules>
+- Follow the prompt properly, do not need to minimize the commands length. If any part of prompt is out of scope, redirect to different agent.
+- Do NOT generate the direct app open command here.
+- Return a command object with 'isExc: false' and a description that instructs to pass this to LocalAgent or another agent that can handle path-based launch.
 - Only handle tasks involving macOS applications or GUI-related system behavior:
   - Examples:
     - Opening, closing, or focusing apps (e.g., "Open Safari", "Quit Slack")

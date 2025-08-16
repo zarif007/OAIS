@@ -88,7 +88,11 @@ export default function App() {
           />
         )}
         <div className="relative w-full">
-          <div className="relative flex items-center w-full bg-white/70 backdrop-blur-xl border border-black/10 rounded-2xl shadow-2xl shadow-black/10 p-1.5">
+          <div
+            className={`relative flex items-center w-full bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 p-1.5 ${
+              isPending && "border-2 border-blue-500"
+            }`}
+          >
             <input
               className={`bg-transparent text-gray-900 placeholder:text-gray-500 text-base flex-1 px-5 py-3.5 rounded-xl outline-none border-none font-medium tracking-tight transition-all duration-200 focus:bg-white/20 ${
                 isPending ? "opacity-60 cursor-wait" : ""

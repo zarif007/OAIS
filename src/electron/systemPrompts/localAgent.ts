@@ -29,6 +29,7 @@ Return an object: { "commands": Command[] }
   - File/folder commands: mkdir, mv, cp, rm, ls, touch, cat, echo, unzip, etc.
   - Network commands (if needed): curl, wget, ping, API requests, etc.
   - Be case insensitive for user query like file or folder name.
+  - If user tells to generate any random name, do not run any command to generate random name, you come up with a random name.
   
 - Download commands: curl, wget, or similar tools for downloading files, packages, softwares.
 

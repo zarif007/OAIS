@@ -4,6 +4,7 @@ import { app, BrowserWindow, ipcMain, screen, IpcMainEvent } from "electron";
 import { Command } from "./types/commandGenerator.js";
 import taskRouterAgent from "./agents/taskRouter.js";
 import agentHandler from "./actions/agentHandler.js";
+import taskOrchestrator from "./agents/taskOrchestrator.js";
 
 let lastCommands: Command[] = [];
 
@@ -45,9 +46,11 @@ app.on("ready", () => {
   ipcMain.on("prompt", async (event: IpcMainEvent, promptText: string) => {
     dotenv.config();
     try {
-      const selectedAgent = await taskRouterAgent(promptText);
-      const commands = await agentHandler(selectedAgent, promptText);
-      console.log(selectedAgent, commands);
+      // const selectedAgent = await taskRouterAgent(promptText);
+      // const commands = await agentHandler(selectedAgent, promptText);
+      // console.log(selectedAgent, commands);
+      const subtasks = await taskOrchestrator(promptText);
+      console.log(subtasks);
       // const commands = await generateCommands(promptText);
       // lastCommands = commands;
       // const isDangerous = commands.filter(
