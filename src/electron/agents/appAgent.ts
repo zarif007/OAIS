@@ -1,5 +1,4 @@
 import { generateObject } from "ai";
-import commandGenerator from "../systemPrompts/localAgent.js";
 import LocalAgentOutputSchema from "../zodSchema/commandGenerator.js";
 import ILocalAgent from "../types/commandGenerator.js";
 import { openai } from "@ai-sdk/openai";

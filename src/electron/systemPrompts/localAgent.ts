@@ -15,11 +15,13 @@ You must return an array of command objects in JSON format.
 <output-format>
 Each command must follow this structure:
 {
+  "commandId": "string",                // unique id for the command (e.g., cmd1, cmd2, etc.)
   "command": "string",                  // shell command or natural text if not executable
-  "isExc": true | false,                // true if this is a valid shell command; false if it belongs to another agent
   "isItDangerous": true | false,        // true if the command modifies or deletes data
   "description": "string",              // short summary of what this command does
-  "placeholder": "string"               // optional — required only if file or folder paths are used
+  "placeholder": "string",              // optional — required only if file or folder paths are used
+  "dependsOn": ["string"],              // list of commandIds that must execute before this one
+  "output": "string"                    // possible output of this command
 }
 Return an object: { "commands": Command[] }
 </output-format>
@@ -36,7 +38,7 @@ Return an object: { "commands": Command[] }
 - Other than anything that is not in the scope of local files and networking, it is NOT your responsibility.
   In such cases:
     - Return a natural language instruction
-    - Set \`isExc: false\`
+    - Set \`command\` to natural language
     - Describe what the other agent should do
 - For any file or folder location in a command, add a \`placeholder\` in the format:
   "mv <location> <location>"
@@ -52,46 +54,74 @@ Expected output:
 {
   "commands": [
     {
+      "commandId": "cmd1",
       "command": "mkdir ${topFolder}/screenshots",
-      "isExc": true,
       "isItDangerous": false,
       "description": "Create a folder named screenshots in the top directory",
-      "placeholder": "mkdir <location>"
+      "placeholder": "mkdir <location>",
+      "dependsOn": [],
+      "output": "A new folder 'screenshots' is created inside ${topFolder}"
     },
     {
+      "commandId": "cmd2",
       "command": "mv ${topFolder}/*.png ${topFolder}/screenshots",
-      "isExc": true,
       "isItDangerous": false,
       "description": "Move all .png files into the screenshots folder",
-      "placeholder": "mv <location> <location>"
+      "placeholder": "mv <location> <location>",
+      "dependsOn": ["cmd1"],
+      "output": "All .png files are moved into ${topFolder}/screenshots"
     }
   ]
 }
 </example>
 
 <example>
-User prompt: "Download a ZIP of the project from the internet and extract it to the projects folder."
+User prompt: "Download the latest dataset into my Downloads folder."
 
 Expected output:
 {
   "commands": [
     {
-      "command": "curl -o ${topFolder}/project.zip <download-url>",
-      "isExc": true,
+      "commandId": "cmd1",
+      "command": "curl -o ~/Downloads/dataset.csv <download-url>",
       "isItDangerous": false,
-      "description": "Download the ZIP file from the internet",
-      "placeholder": "curl -o <location> <url>"
-    },
-    {
-      "command": "unzip ${topFolder}/project.zip -d ${topFolder}/projects",
-      "isExc": true,
-      "isItDangerous": false,
-      "description": "Extract the ZIP file into the projects folder",
-      "placeholder": "unzip <location> <location>"
+      "description": "Download dataset into the Downloads folder",
+      "placeholder": "curl -o <location> <url>",
+      "dependsOn": [],
+      "output": "dataset.csv downloaded into ~/Downloads"
     }
   ]
 }
 </example>
+
+<example>
+User prompt: "Extract the archive.zip file in Documents and remove the original zip."
+
+Expected output:
+{
+  "commands": [
+    {
+      "commandId": "cmd1",
+      "command": "unzip ~/Documents/archive.zip -d ~/Documents/archive",
+      "isItDangerous": false,
+      "description": "Extract archive.zip into a new folder inside Documents",
+      "placeholder": "unzip <location> <location>",
+      "dependsOn": [],
+      "output": "archive.zip extracted into ~/Documents/archive"
+    },
+    {
+      "commandId": "cmd2",
+      "command": "rm ~/Documents/archive.zip",
+      "isItDangerous": true,
+      "description": "Delete the original archive.zip file",
+      "placeholder": "rm <location>",
+      "dependsOn": ["cmd1"],
+      "output": "archive.zip removed from ~/Documents"
+    }
+  ]
+}
+</example>
+</examples>
 `.trim();
 
 export default localAgentSystemPrompt;

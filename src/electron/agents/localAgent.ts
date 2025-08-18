@@ -1,5 +1,5 @@
 import { generateObject } from "ai";
-import commandGenerator from "../systemPrompts/localAgent.js";
+import localAgentSystemPrompt from "../systemPrompts/localAgent.js";
 import LocalAgentOutputSchema from "../zodSchema/commandGenerator.js";
 import ILocalAgent from "../types/commandGenerator.js";
 import { getTopmostFolder } from "../utils/folderDetails.js";
@@ -10,7 +10,7 @@ const localAgent = async (prompt: string) => {
   const model = openai("gpt-4o-mini");
   const topFolder = await getTopmostFolder();
 
-  let system = commandGenerator(topFolder ?? "~");
+  let system = localAgentSystemPrompt(topFolder ?? "~");
 
   const { object } = await generateObject<ILocalAgent>({
     model,

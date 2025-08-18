@@ -1,10 +1,12 @@
 export interface Command {
+  commandId: string;
   command: string;
-  isExc: boolean;
   isItDangerous: boolean;
   description: string;
   placeholder?: string;
   agent?: string;
+  dependsOn: string[];
+  output: string;
 }
 
 export interface ILocalAgent {
