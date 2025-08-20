@@ -1,5 +1,6 @@
 import { exec } from "child_process";
 import * as util from "util";
+import errorHandlingAgent from "../agents/errorHandlingAgent.js";
 
 const execPromise = util.promisify(exec);
 
@@ -21,13 +22,17 @@ async function commandsExecutor(commands: string[]): Promise<CommandResult[]> {
         stdout: stdout.trim(),
         stderr: stderr.trim(),
       });
+      console.log(stdout);
     } catch (error: any) {
       console.error(`Error executing "${command}": ${error.message}`);
-      results.push({
+      const { commands: cmds } = await errorHandlingAgent(
         command,
-        stdout: "",
-        stderr: error.message,
-      });
+        error.message
+      );
+
+      console.error(`Error handling agent suggested to execute: ${cmds}`);
+      const res = await commandsExecutor(cmds);
+      results.push(...res);
     }
   }
 
