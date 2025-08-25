@@ -1,4 +1,4 @@
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, useRef } from "react";
 import { Send } from "lucide-react";
 // @ts-ignore
 const { ipcRenderer } = (window as any).require?.("electron") || {
@@ -13,6 +13,9 @@ export default function App() {
   const [isPending, startTransition] = useTransition();
   const [_, setExecuting] = useState(false);
   const [dangerousCmds, setDangerousCmds] = useState<null | Command[]>(null);
+  const [promptHistory, setPromptHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!ipcRenderer) return;
@@ -50,6 +53,10 @@ export default function App() {
       startTransition(() => {
         ipcRenderer.send("prompt", prompt);
       });
+      setPromptHistory((prev) =>
+        prompt && prev[prev.length - 1] !== prompt ? [...prev, prompt] : prev
+      );
+      setHistoryIndex(null);
     }
     setPrompt("");
   };
@@ -94,14 +101,60 @@ export default function App() {
             }`}
           >
             <input
+              ref={inputRef}
               className={`bg-transparent text-gray-900 placeholder:text-gray-500 text-base flex-1 px-5 py-3.5 rounded-xl outline-none border-none font-medium tracking-tight transition-all duration-200 focus:bg-white/20 ${
                 isPending ? "opacity-60 cursor-wait" : ""
               }`}
               type="text"
               placeholder={isPending ? "Executing..." : "Ask me anything..."}
               value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              onChange={(e) => {
+                setPrompt(e.target.value);
+                setHistoryIndex(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSend();
+                } else if (e.key === "ArrowUp") {
+                  e.preventDefault();
+                  setHistoryIndex((prev) => {
+                    const newIndex =
+                      prev === null
+                        ? promptHistory.length - 1
+                        : Math.max(0, prev - 1);
+                    if (promptHistory.length > 0 && newIndex >= 0) {
+                      setPrompt(promptHistory[newIndex]);
+                      setTimeout(() => {
+                        inputRef.current?.setSelectionRange(
+                          promptHistory[newIndex].length,
+                          promptHistory[newIndex].length
+                        );
+                      }, 0);
+                      return newIndex;
+                    }
+                    return prev;
+                  });
+                } else if (e.key === "ArrowDown") {
+                  e.preventDefault();
+                  setHistoryIndex((prev) => {
+                    if (prev === null) return null;
+                    // If at last command, pressing down should clear input
+                    if (prev >= promptHistory.length - 1) {
+                      setPrompt("");
+                      return null;
+                    }
+                    const newIndex = prev + 1;
+                    setPrompt(promptHistory[newIndex]);
+                    setTimeout(() => {
+                      inputRef.current?.setSelectionRange(
+                        promptHistory[newIndex].length,
+                        promptHistory[newIndex].length
+                      );
+                    }, 0);
+                    return newIndex;
+                  });
+                }
+              }}
               autoFocus
               disabled={isPending || !!dangerousCmds}
             />

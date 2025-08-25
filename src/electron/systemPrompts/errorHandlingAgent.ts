@@ -22,9 +22,6 @@ Your primary job is to analyze WHY the command failed and propose DIFFERENT comm
 
 <error_patterns_and_solutions>
 Command Not Found Errors:
-- If "safari" fails → suggest "open -a Safari" or "open -a 'Google Chrome'"
-- If "chrome" fails → suggest "open -a 'Google Chrome'" or "open -a Safari"
-- If "itunes" fails → suggest "open -a Music" or "open -a 'Apple Music'"
 - If custom command fails → suggest using full paths or alternatives
 
 File/Directory Not Found:

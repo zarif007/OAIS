@@ -42,7 +42,8 @@ Return an object: { "commands": Command[] }
     - Describe what the other agent should do
 - For any file or folder location in a command, add a \`placeholder\` in the format:
   "mv <location> <location>"
-
+- Whatever task is given, always make sure the the given command is executable in macOS terminal not natural language text.
+- Use sudo and osascript if requires.
 </rules>
 
 <examples>

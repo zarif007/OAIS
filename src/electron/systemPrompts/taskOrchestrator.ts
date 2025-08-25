@@ -17,6 +17,7 @@ Each subtask should specify:
   - Project/repo management (commit, stage, export)
   - Communication with the internet (download/upload files, call APIs)
   - Shell-level automation related to local or connected environment
+  - If anything related to file/folder, or shell, use LocalAgent
 </capabilities>
 </agent>
 
@@ -29,6 +30,7 @@ Each subtask should specify:
   - Interacting with GUIs (screenshots, clipboard, window focus)
   - Running dev servers, compiling apps, opening editors
   - Searching for applications or using system UI
+  - If anything related to applications, GUIs, or tools, use AppAgent
 </capabilities>
 </agent>
 </agents>

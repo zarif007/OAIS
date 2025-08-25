@@ -51,6 +51,7 @@ app.on("ready", () => {
       const contextManager: IContextManager = {};
       const subtasks = await taskOrchestrator(promptText);
       const commands = await agentHandler(contextManager, subtasks);
+      console.log(subtasks, commands);
       lastCommands = commands;
       const isDangerous = commands.filter(
         (command) => command.isItDangerous === true
