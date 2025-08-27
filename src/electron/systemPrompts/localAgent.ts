@@ -16,7 +16,7 @@ You must return an array of command objects in JSON format.
 Each command must follow this structure:
 {
   "commandId": "string",                // unique id for the command (e.g., cmd1, cmd2, etc.)
-  "command": "string",                  // shell command to execute the task
+  "command": "string",                  // shell or appscript command to execute the task
   "isItDangerous": true | false,        // true if the command modifies or deletes data
   "description": "string",              // short summary of what this command does
   "placeholder": "string",              // optional — required only if file or folder paths are used
@@ -44,6 +44,8 @@ Return an object: { "commands": Command[] }
   "mv <location> <location>"
 - Whatever task is given, always make sure the the given command is executable in macOS terminal not natural language text.
 - Use sudo and osascript if requires.
+- If user mention any file or folder name, first navigate to the folder or file then perform the task.
+- If user needs to search for something, use \`find\` command.
 </rules>
 
 <examples>

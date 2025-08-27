@@ -1,4 +1,4 @@
-export const taskOrchestratorSystemPrompt = `
+const taskOrchestratorSystemPrompt = `
 <identity>
 You are the TaskOrchestrator Agent of OAIS. Your job is to take a user's instruction and break it down into multiple subtasks. 
 Each subtask should specify:
@@ -72,4 +72,6 @@ Output:
   ]
 }
 </examples>
-`;
+`.trim();
+
+export default taskOrchestratorSystemPrompt;

@@ -20,12 +20,7 @@ Return an object: { "commands": Command[] }
 </output-format>
 
 <rules>
-- Follow the prompt properly, do not need to minimize the commands length. If any part of prompt is out of scope, redirect to a different agent.
-- Do NOT generate direct file/folder operations — that belongs to LocalAgent.
-- If a prompt involves file/folder operations or networking (e.g., downloading), return a natural language instruction with:
-  - A placeholder command
-  - \`isItDangerous: false\`
-  - An instruction that this should be handled by LocalAgent
+- Follow the prompt properly, do not need to minimize the commands length.
 - Only handle tasks involving macOS applications or GUI-related system behavior:
   - Examples:
     - Opening, closing, or focusing apps (e.g., "Open Safari", "Quit Slack")
@@ -35,9 +30,7 @@ Return an object: { "commands": Command[] }
     - Running development servers, emulators, or dev tools (like Xcode, VS Code)
     - Managing background processes for applications
     - Only act on apps, not files/folders.
-
 - Use AppleScript, Automator, macOS shortcuts, or command-line tools (like \`open\`, \`osascript\`, \`screencapture\`, \`pkill\`, etc.)
-
 </rules>
 
 <examples>
@@ -75,24 +68,6 @@ Expected output:
       "placeholder": "screencapture <location>",
       "dependsOn": [],
       "output": "Screenshot saved as ~/Desktop/screenshot.png"
-    }
-  ]
-}
-</example>
-
-<example>
-User prompt: "Download a PDF and save it to Downloads folder"
-
-Expected output:
-{
-  "commands": [
-    {
-      "commandId": "cmd1",
-      "command": "Download a PDF file from the internet",
-      "isItDangerous": false,
-      "description": "Ask LocalAgent to handle the file download",
-      "dependsOn": [],
-      "output": "Instruction passed to LocalAgent"
     }
   ]
 }

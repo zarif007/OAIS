@@ -2,7 +2,6 @@ import * as dotenv from "dotenv";
 import * as path from "path";
 import { app, BrowserWindow, ipcMain, screen, IpcMainEvent } from "electron";
 import { Command } from "./types/commandGenerator.js";
-import taskRouterAgent from "./agents/taskRouter.js";
 import agentHandler from "./actions/agentHandler.js";
 import taskOrchestrator from "./agents/taskOrchestrator.js";
 import IContextManager from "./types/contextManager.js";
@@ -108,9 +107,6 @@ app.on("ready", () => {
 
 const executeTasks = async (commands: Command[], mainWindow: BrowserWindow) => {
   try {
-    // console.log("executeTasks called with commands:", commands);
-    // const parsedCommands = await parseCommands(commands);
-    // const compiledCommands = commandCompiler(parsedCommands);
     await commandsExecutor(commands.map((cmd) => cmd.command));
     mainWindow.webContents.send("commands-executed", lastCommands);
   } catch (err) {

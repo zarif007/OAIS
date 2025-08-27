@@ -2,7 +2,7 @@ import { generateObject } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { TaskRouterOutput } from "../types/taskRouter.js";
 import { TaskRouterSchema } from "../zodSchema/taskRouter.js";
-import { taskOrchestratorSystemPrompt } from "../systemPrompts/taskOrchestrator.js";
+import taskOrchestratorSystemPrompt from "../systemPrompts/taskOrchestrator.js";
 import { ITaskOrchestratorOutput } from "../types/taskOrchestrator.js";
 import { TaskOrchestratorResponseSchema } from "../zodSchema/taskOrchestrator.js";
 

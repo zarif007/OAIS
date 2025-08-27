@@ -74,7 +74,7 @@ async function resolvedPathName(commandObj: Command) {
 
     if (match) {
       const score = similarityPercent(part, match);
-      if (score >= 80) {
+      if (score >= 70) {
         updatedParts.push(match);
       } else {
         updatedParts.push(part);
