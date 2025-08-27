@@ -11,7 +11,7 @@ import { Command } from "../electron/types/commandGenerator";
 export default function App() {
   const [prompt, setPrompt] = useState("");
   const [isPending, startTransition] = useTransition();
-  const [_, setExecuting] = useState(false);
+  const [isExecuting, setIsExecuting] = useState(false);
   const [dangerousCmds, setDangerousCmds] = useState<null | Command[]>(null);
   const [promptHistory, setPromptHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
@@ -23,33 +23,40 @@ export default function App() {
     const dangerousCommandHandler = (_: any, data: any[]) => {
       console.log("Dangerous command received:", data);
       setDangerousCmds(data);
-      setExecuting(false);
+      // Don't set executing to false here - wait for user to cancel or proceed
     };
 
     const commandsExecutedHandler = (_: any, data: any[]) => {
       console.log("Commands executed:", data);
-      setExecuting(false);
+      // Don't set executing to false here - wait for prompt-completed
     };
 
     const commandErrorHandler = (_: any, error: any) => {
       console.error("Command error:", error);
-      setExecuting(false);
+      setIsExecuting(false);
+    };
+
+    const promptCompletedHandler = () => {
+      console.log("Prompt completed");
+      setIsExecuting(false);
     };
 
     ipcRenderer.on("dangerous-command", dangerousCommandHandler);
     ipcRenderer.on("commands-executed", commandsExecutedHandler);
     ipcRenderer.on("command-error", commandErrorHandler);
+    ipcRenderer.on("prompt-completed", promptCompletedHandler);
 
     return () => {
       ipcRenderer.removeListener("dangerous-command", dangerousCommandHandler);
       ipcRenderer.removeListener("commands-executed", commandsExecutedHandler);
       ipcRenderer.removeListener("command-error", commandErrorHandler);
+      ipcRenderer.removeListener("prompt-completed", promptCompletedHandler);
     };
   }, []);
 
   const handleSend = () => {
     if (prompt.trim() && ipcRenderer) {
-      setExecuting(true);
+      setIsExecuting(true);
       startTransition(() => {
         ipcRenderer.send("prompt", prompt);
       });
@@ -63,7 +70,6 @@ export default function App() {
 
   const handleDangerCancel = () => {
     setDangerousCmds(null);
-    setExecuting(false);
     if (ipcRenderer) {
       ipcRenderer.send("dangerous-command-cancel");
     }
@@ -73,7 +79,7 @@ export default function App() {
     if (ipcRenderer && dangerousCmds) {
       ipcRenderer.send("dangerous-command-proceed", dangerousCmds);
       setDangerousCmds(null);
-      setExecuting(true);
+      setIsExecuting(true);
     }
   };
 
@@ -96,17 +102,17 @@ export default function App() {
         )}
         <div className="relative w-full">
           <div
-            className={`relative flex items-center w-full bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 p-1.5 ${
-              isPending && "border-2 border-blue-500"
+            className={`relative flex items-center w-full bg-white/70 backdrop-blur-xl rounded-2xl shadow-2xl shadow-black/10 p-1.5 border-3 ${
+              isExecuting && "border-purple-600/80"
             }`}
           >
             <input
               ref={inputRef}
               className={`bg-transparent text-gray-900 placeholder:text-gray-500 text-base flex-1 px-5 py-3.5 rounded-xl outline-none border-none font-medium tracking-tight transition-all duration-200 focus:bg-white/20 ${
-                isPending ? "opacity-60 cursor-wait" : ""
+                isExecuting ? "opacity-60 cursor-wait" : ""
               }`}
               type="text"
-              placeholder={isPending ? "Executing..." : "Ask me anything..."}
+              placeholder={isExecuting ? "Executing..." : "Ask me anything..."}
               value={prompt}
               onChange={(e) => {
                 setPrompt(e.target.value);
@@ -156,13 +162,13 @@ export default function App() {
                 }
               }}
               autoFocus
-              disabled={isPending || !!dangerousCmds}
+              disabled={isExecuting || !!dangerousCmds}
             />
 
             <button
               className="ml-2 p-3 h-12 rounded-xl bg-gradient-to-br from-zinc-700 via-zinc-900 to-black hover:from-zinc-600 hover:to-zinc-800 transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center shadow-lg shadow-zinc-800/40 hover:shadow-black/50 hover:scale-[1.05] active:scale-[0.97] disabled:hover:scale-100"
               onClick={handleSend}
-              disabled={!prompt.trim() || isPending || !!dangerousCmds}
+              disabled={!prompt.trim() || isExecuting || !!dangerousCmds}
               aria-label="Send"
             >
               <Send className="w-5 h-5 text-white drop-shadow" />

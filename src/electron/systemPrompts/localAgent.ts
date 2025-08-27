@@ -16,7 +16,7 @@ You must return an array of command objects in JSON format.
 Each command must follow this structure:
 {
   "commandId": "string",                // unique id for the command (e.g., cmd1, cmd2, etc.)
-  "command": "string",                  // shell command or natural text if not executable
+  "command": "string",                  // shell command to execute the task
   "isItDangerous": true | false,        // true if the command modifies or deletes data
   "description": "string",              // short summary of what this command does
   "placeholder": "string",              // optional — required only if file or folder paths are used

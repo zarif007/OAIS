@@ -15,7 +15,7 @@ app.on("ready", () => {
     screen.getPrimaryDisplay().workAreaSize;
 
   const windowWidth = 700;
-  const windowHeight = 100;
+  const windowHeight = 110;
 
   const mainWindow = new BrowserWindow({
     width: windowWidth,
@@ -67,7 +67,8 @@ app.on("ready", () => {
         mainWindow.webContents.send("dangerous-command", isDangerous);
         return;
       }
-      executeTasks(commands, mainWindow);
+      await executeTasks(commands, mainWindow);
+      mainWindow.webContents.send("prompt-completed");
     } catch (err) {
       console.error("Error generating commands:", err);
       mainWindow.webContents.send("command-error", err);
@@ -76,7 +77,7 @@ app.on("ready", () => {
 
   ipcMain.on("dangerous-command-proceed", async () => {
     try {
-      const normalHeight = 100;
+      const normalHeight = 110;
       const currentBounds = mainWindow.getBounds();
       mainWindow.setBounds({
         ...currentBounds,
@@ -84,7 +85,8 @@ app.on("ready", () => {
         y: screenHeight - normalHeight - 10,
       });
 
-      executeTasks(lastCommands, mainWindow);
+      await executeTasks(lastCommands, mainWindow);
+      mainWindow.webContents.send("prompt-completed");
     } catch (err) {
       console.error("Error executing dangerous commands:", err);
       mainWindow.webContents.send("command-error", err);
@@ -100,6 +102,7 @@ app.on("ready", () => {
       height: normalHeight,
       y: screenHeight - normalHeight - 10,
     });
+    mainWindow.webContents.send("prompt-completed");
   });
 });
 
@@ -112,5 +115,6 @@ const executeTasks = async (commands: Command[], mainWindow: BrowserWindow) => {
     mainWindow.webContents.send("commands-executed", lastCommands);
   } catch (err) {
     console.error("Error executing tasks:", err);
+    mainWindow.webContents.send("command-error", err);
   }
 };

@@ -10,7 +10,7 @@ const localAgent = async (prompt: string) => {
   const model = openai("gpt-4o-mini");
   const topFolder = await getTopmostFolder();
 
-  let system = localAgentSystemPrompt(topFolder ?? "~");
+  let system = localAgentSystemPrompt("~");
 
   const { object } = await generateObject<ILocalAgent>({
     model,

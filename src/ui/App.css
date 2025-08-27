@@ -1,6 +1,54 @@
+/* Animated moving black border */
+.animated-black-border {
+  border: 3px solid transparent;
+  border-radius: 1rem; /* match rounded-2xl */
+  pointer-events: none;
+  z-index: 10;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(270deg, black 0%, transparent 50%, black 100%) 0 0/200%
+    100% repeat;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: move-black-border 2s linear infinite;
+}
+
+@keyframes move-black-border {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 200% 0%;
+  }
+}
 @import "tailwindcss";
 html,
 body,
 #root {
   background: transparent !important;
+}
+
+@keyframes border-move {
+  0% {
+    border-image-source: linear-gradient(
+      90deg,
+      black 0%,
+      transparent 50%,
+      black 100%
+    );
+  }
+  100% {
+    border-image-source: linear-gradient(
+      450deg,
+      black 0%,
+      transparent 50%,
+      black 100%
+    );
+  }
+}
+
+.animate-border-move {
+  animation: border-move 1.2s linear infinite;
 }

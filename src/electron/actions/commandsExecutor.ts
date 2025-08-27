@@ -25,14 +25,14 @@ async function commandsExecutor(commands: string[]): Promise<CommandResult[]> {
       console.log(stdout);
     } catch (error: any) {
       console.error(`Error executing "${command}": ${error.message}`);
-      // const { commands: cmds } = await errorHandlingAgent(
-      //   command,
-      //   error.message
-      // );
+      const { commands: cmds } = await errorHandlingAgent(
+        command,
+        error.message
+      );
 
-      // console.error(`Error handling agent suggested to execute: ${cmds}`);
-      // const res = await commandsExecutor(cmds);
-      // results.push(...res);
+      console.error(`Error handling agent suggested to execute: ${cmds}`);
+      const res = await commandsExecutor(cmds);
+      results.push(...res);
     }
   }
 
